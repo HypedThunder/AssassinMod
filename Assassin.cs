@@ -107,7 +107,11 @@ namespace Assassin
 
             charBody.hullClassification = HullClassification.Human;
 
-
+            Transform charactermodel = charBody.GetComponent<ModelLocator>().modelTransform;
+            Transform hitboxTransform = charactermodel.Find("AssassinArmature/ROOT,CENTER/ROOT/base/HitBox");
+            hitboxTransform.localPosition = new Vector3(0.32f, 1.4f, -0.2f);
+            hitboxTransform.localEulerAngles = new Vector3(0f, 0f, 352f);
+            hitboxTransform.localScale = new Vector3(4.4f, 4.6f, 4f);
 
 
             characterDisplay.transform.localScale = Vector3.one * 1f;
