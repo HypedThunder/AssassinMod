@@ -4,20 +4,19 @@ using EntityStates.Merc;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
-using EntityStates.ImpMonster;
-using EntityStates.ImpBossMonster;
 using EntityStates.Assassin.Weapon;
+using EntityStates.RoboBallBoss.Weapon;
 
 namespace EntityStates.Assassin.Weapon1
 {
 	// Token: 0x0200000A RID: 10
-	public class KnifeAttack : BaseState
+	public class SlashCombo2 : BaseState
 	{
 		// Token: 0x06000038 RID: 56 RVA: 0x000067E4 File Offset: 0x000049E4
 		public override void OnEnter()
 		{
 			base.OnEnter();
-			this.duration = KnifeAttack.baseDuration / this.attackSpeedStat;
+			this.duration = 0.6f / this.attackSpeedStat;
 			this.modelAnimator = base.GetModelAnimator();
 			Transform modelTransform = base.GetModelTransform();
 			this.attack = new OverlapAttack();
@@ -25,17 +24,17 @@ namespace EntityStates.Assassin.Weapon1
 			this.attack.inflictor = base.gameObject;
 			this.attack.teamIndex = TeamComponent.GetObjectTeam(this.attack.attacker);
 			this.attack.damage = 2.5f * this.damageStat;
-			this.attack.hitEffectPrefab = SwipeForward.hitEffectPrefab;
+			this.attack.hitEffectPrefab = SlashCombo.hitEffectPrefab;
 			this.attack.isCrit = Util.CheckRoll(this.critStat, base.characterBody.master);
 			this.animator = base.GetModelAnimator();
 			Util.PlaySound(SwipeForward.attackString, base.gameObject);
 			string hitboxGroupName = "";
 			string animationStateName = "";
-			SlashCombo.SlashComboPermutation slashComboPermutation = this.slashComboPermutation;
-			SlashCombo.SlashComboPermutation slashComboPermutation2 = slashComboPermutation;
-			if (slashComboPermutation2 != SlashCombo.SlashComboPermutation.Slash1)
+			SlashCombo2.SlashComboPermutation slashComboPermutation = this.slashComboPermutation;
+			SlashCombo2.SlashComboPermutation slashComboPermutation2 = slashComboPermutation;
+			if (slashComboPermutation2 != SlashCombo2.SlashComboPermutation.Slash1)
 			{
-				if (slashComboPermutation2 == SlashCombo.SlashComboPermutation.Slash2)
+				if (slashComboPermutation2 == SlashCombo2.SlashComboPermutation.Slash2)
 				{
 					hitboxGroupName = "DaggerLeft";
 					animationStateName = "SlashP2";
@@ -72,15 +71,10 @@ namespace EntityStates.Assassin.Weapon1
 					bool flag6 = base.characterMotor && !base.characterMotor.isGrounded;
 					if (flag6)
 					{
-						base.SmallHop(base.characterMotor, KnifeAttack.hitHopVelocity);
+						base.SmallHop(base.characterMotor, 6f);
 					}
 					if (flag6)
 					{
-						bool flag7 = base.characterMotor && !base.characterMotor.isGrounded;
-						if (flag7)
-						{
-							base.SmallHop(base.characterMotor, KnifeAttack.hitHopVelocity);
-						}
 
 						bool flag8 = base.skillLocator.special.skillDef.skillNameToken == "ASSASSIN_SPECIAL_LUNGE_NAME";
 						if (flag8)
@@ -120,17 +114,17 @@ namespace EntityStates.Assassin.Weapon1
 				bool flag2 = !this.hasSlashed;
 				if (flag2)
 				{
-					EffectManager.SimpleMuzzleFlash(FireVoidspikes.swipeEffectPrefab, base.gameObject, "SwingCenter", true);
+					EffectManager.SimpleMuzzleFlash(SlashCombo.swingEffectPrefab, base.gameObject, "SwingCenter", true);
 					HealthComponent healthComponent = base.characterBody.healthComponent;
 					CharacterDirection component = base.characterBody.GetComponent<CharacterDirection>();
 					bool flag3 = healthComponent;
 					if (flag3)
 					{
-						healthComponent.TakeDamageForce(KnifeAttack.selfForceMagnitude * component.forward, true, false);
+						healthComponent.TakeDamageForce(6f * component.forward, true, false);
 					}
 					this.hasSlashed = true;
 				}
-				this.attack.forceVector = base.transform.forward * KnifeAttack.forceMagnitude;
+				this.attack.forceVector = base.transform.forward * 10f;
 				this.attack.Fire(null);
 			}
 			bool flag4 = base.fixedAge < this.duration || !base.isAuthority;
@@ -139,19 +133,19 @@ namespace EntityStates.Assassin.Weapon1
 				bool flag5 = base.inputBank && base.inputBank.skill1.down;
 				if (flag5)
 				{
-					SlashCombo slashCombo = new SlashCombo();
-					SlashCombo.SlashComboPermutation slashComboPermutation = this.slashComboPermutation;
-					SlashCombo.SlashComboPermutation slashComboPermutation2 = slashComboPermutation;
-					if (slashComboPermutation2 != SlashCombo.SlashComboPermutation.Slash1)
+					SlashCombo2 slashCombo = new SlashCombo2();
+					SlashCombo2.SlashComboPermutation slashComboPermutation = this.slashComboPermutation;
+					SlashCombo2.SlashComboPermutation slashComboPermutation2 = slashComboPermutation;
+					if (slashComboPermutation2 != SlashCombo2.SlashComboPermutation.Slash1)
 					{
-						if (slashComboPermutation2 == SlashCombo.SlashComboPermutation.Slash2)
+						if (slashComboPermutation2 == SlashCombo2.SlashComboPermutation.Slash2)
 						{
-							slashCombo.slashComboPermutation = SlashCombo.SlashComboPermutation.Slash1;
+							slashCombo.slashComboPermutation = SlashCombo2.SlashComboPermutation.Slash1;
 						}
 					}
 					else
 					{
-						slashCombo.slashComboPermutation = SlashCombo.SlashComboPermutation.Slash2;
+						slashCombo.slashComboPermutation = SlashCombo2.SlashComboPermutation.Slash2;
 					}
 					this.outer.SetNextState(slashCombo);
 				}
@@ -227,7 +221,7 @@ namespace EntityStates.Assassin.Weapon1
 		private BaseState.HitStopCachedState hitStopCachedState;
 
 		// Token: 0x0400004B RID: 75
-		public SlashCombo.SlashComboPermutation slashComboPermutation;
+		public SlashCombo2.SlashComboPermutation slashComboPermutation;
 
 		// Token: 0x0200000E RID: 14
 		public enum SlashComboPermutation

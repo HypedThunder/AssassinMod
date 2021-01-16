@@ -5,6 +5,8 @@ using EntityStates.HermitCrab;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using EntityStates.Assassin.Weapon;
+using EntityStates.RoboBallBoss.Weapon;
 
 namespace EntityStates.Assassin.Weapon4
 {
@@ -41,14 +43,14 @@ namespace EntityStates.Assassin.Weapon4
             float value2 = Vector3.Dot(this.forwardDirection, rhs2);
             this.animator.SetFloat("forwardSpeed", value, 0.4f, Time.fixedDeltaTime);
             this.animator.SetFloat("rightSpeed", value2, 0.4f, Time.fixedDeltaTime);
-            bool flag4 = FireMortar.mortarMuzzleflashEffect;
+            bool flag4 = SlashCombo.hitEffectPrefab;
             if (flag4)
             {
                 Transform exists = base.GetModelTransform();
                 bool flag5 = exists;
                 if (flag5)
                 {
-                    EffectManager.SimpleMuzzleFlash(FireMortar.mortarMuzzleflashEffect, base.gameObject, "DaggerLeft", false);
+                    EffectManager.SimpleMuzzleFlash(SlashCombo.hitEffectPrefab, base.gameObject, "DaggerLeft", false);
                 }
             }
             this.RecalculateSpeed();
@@ -131,7 +133,7 @@ namespace EntityStates.Assassin.Weapon4
                 bool flag5 = exists;
                 if (flag5)
                 {
-                    EffectManager.SimpleMuzzleFlash(SwipeForward.hitEffectPrefab, base.gameObject, "SwingCenter", false);
+                    EffectManager.SimpleMuzzleFlash(SlashCombo.hitEffectPrefab, base.gameObject, "SwingCenter", false);
                 }
             }
             this.blastAttack = new BlastAttack
@@ -142,12 +144,12 @@ namespace EntityStates.Assassin.Weapon4
                 baseForce = 0f,
                 bonusForce = Vector3.zero,
                 position = base.transform.position,
-                radius = 15f,
+                radius = 16f,
                 falloffModel = BlastAttack.FalloffModel.None,
                 crit = base.RollCrit(),
                 baseDamage = 8f * this.damageStat,
                 procCoefficient = 0.8f,
-                impactEffect = SwipeForward.hitEffectPrefab.GetComponent<EffectComponent>().effectIndex
+                impactEffect = SlashCombo.hitEffectPrefab.GetComponent<EffectComponent>().effectIndex
             };
 
             blastAttack.damageType |= DamageType.CrippleOnHit;
@@ -185,10 +187,10 @@ namespace EntityStates.Assassin.Weapon4
         public static GameObject dodgeEffect;
 
         // Token: 0x04000021 RID: 33
-        public static float initialSpeedCoefficient = 13f;
+        public static float initialSpeedCoefficient = 12f;
 
         // Token: 0x04000022 RID: 34
-        public static float finalSpeedCoefficient = 0.35f;
+        public static float finalSpeedCoefficient = 0.4f;
 
         // Token: 0x04000023 RID: 35
         private float rollSpeed;

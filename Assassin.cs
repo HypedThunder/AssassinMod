@@ -13,9 +13,8 @@ using UnityEngine.Networking;
 using EntityStates.Assassin.Weapon2;
 using EntityStates.Assassin.Weapon3;
 using EntityStates.Assassin.Weapon4;
-using RoR2.Projectile;
 using RealAssassin;
-using EntityStates.Assassin5;
+using EntityStates.Assassin.Weapon6;
 using EntityStates.Assassin.Weapon5;
 using AssassinAssets;
 using EntityStates.Assassin.Weapon1;
@@ -39,8 +38,7 @@ namespace Assassin
 
         public static GameObject assassinCrosshair;
 
-        private static readonly Color CHAR_COLOR = new Color(0.5f, 0.1f, 0.5f);
-        private static readonly Color HEAL_COLOR = new Color(0.5f, 0.1f, 0.5f);
+        private static readonly Color CHAR_COLOR = new Color(0.5f, 0f, 0f);
 
         private static ConfigEntry<float> baseHealth;
         private static ConfigEntry<float> healthGrowth;
@@ -111,10 +109,8 @@ namespace Assassin
             Transform hitboxTransform = charactermodel.Find("AssassinArmature/ROOT,CENTER/ROOT/base/HitBox");
             hitboxTransform.localPosition = new Vector3(0.32f, 1.4f, -0.2f);
             hitboxTransform.localEulerAngles = new Vector3(0f, 0f, 352f);
-            hitboxTransform.localScale = new Vector3(4.4f, 4.6f, 4f);
+            hitboxTransform.localScale = new Vector3(4f, 4.2f, 4.3f);
 
-
-            characterDisplay.transform.localScale = Vector3.one * 1f;
             characterDisplay.AddComponent<NetworkIdentity>();
 
             //create the custom crosshair
@@ -130,11 +126,11 @@ namespace Assassin
 
 
 
-            string desc = "Assassin is a swift melee-hybrid that rapidly phases in and out of combat and delivers swift and fatal blows.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine;
+            string desc = "The Assassin is a swift melee-hybrid that rapidly phases in and out of combat and delivers swift and fatal blows.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine;
             desc = desc + "< ! > Deep Wound is good for dealing with aerial enemies." + Environment.NewLine + Environment.NewLine;
             desc = desc + "< ! > Extra stacks of Blade Rain increase the amount of projectiles thrown out at once." + Environment.NewLine + Environment.NewLine;
             desc = desc + "< ! > Resupply is a good way of keeping a steady source of damage on targets." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Volatile Scrap is great for clearing out crowds easily.</color>" + Environment.NewLine;
+            desc = desc + "< ! > Sweeping Slash is a good source of mobility and offense.</color>" + Environment.NewLine;
 
             LanguageAPI.Add("ASSASSIN_NAME", "Assassin");
             LanguageAPI.Add("ASSASSIN_DESCRIPTION", desc);
@@ -156,6 +152,7 @@ namespace Assassin
             charBody.baseArmor = baseArmor.Value;
             charBody.levelArmor = 0;
             charBody.baseCrit = 1;
+            charBody.baseJumpPower = 15f;
 
             charBody.preferredPodPrefab = Resources.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponent<CharacterBody>().preferredPodPrefab;
 
@@ -188,8 +185,8 @@ namespace Assassin
 
         private void RegisterStates()
         {
-            LoadoutAPI.AddSkill(typeof(KnifeAttack));
-            LoadoutAPI.AddSkill(typeof(ComboAttack));
+            LoadoutAPI.AddSkill(typeof(SlashCombo2));
+            LoadoutAPI.AddSkill(typeof(Sniper));
             LoadoutAPI.AddSkill(typeof(KnifeBurst));
             LoadoutAPI.AddSkill(typeof(BounceKnife));
             LoadoutAPI.AddSkill(typeof(WarpDash));
@@ -227,13 +224,13 @@ namespace Assassin
         {
             SkillLocator component = myCharacter.GetComponent<SkillLocator>();
 
-            string desc = "Swiftly slash into your enemies, dealing <style=cIsDamage>" + KnifeAttack.damageCoefficient * 100f + "% damage</style>. Successful aerial hits <style=cIsUtility>reduce the cooldown of Sweeping Slash</style>.";
+            string desc = "Swiftly sice into your enemies, dealing <style=cIsDamage>250% damage</style>. Successful aerial hits <style=cIsUtility>reduce the cooldown of Sweeping Slash</style>.";
 
             LanguageAPI.Add("ASSASSIN_PRIMARY_CUT_NAME", "Deep Wound");
             LanguageAPI.Add("ASSASSIN_PRIMARY_CUT_DESCRIPTION", desc);
 
             SkillDef mySkillDef = ScriptableObject.CreateInstance<SkillDef>();
-            mySkillDef.activationState = new SerializableEntityStateType(typeof(KnifeAttack));
+            mySkillDef.activationState = new SerializableEntityStateType(typeof(SlashCombo2));
             mySkillDef.activationStateMachineName = "Weapon";
             mySkillDef.baseMaxStock = 1;
             mySkillDef.baseRechargeInterval = 0f;
@@ -335,7 +332,7 @@ namespace Assassin
             skillDef2.requiredStock = 1;
             skillDef2.shootDelay = 0f;
             skillDef2.stockToConsume = 1;
-            skillDef2.icon = Assets.icon2;
+            skillDef2.icon = Assets.icon2b;
             skillDef2.skillDescriptionToken = "ASSASSIN_SECONDARY2_BOUNCE_DESCRIPTION";
             skillDef2.skillName = "ASSASSIN_SECONDARY2_BOUNCE_NAME";
             skillDef2.skillNameToken = "ASSASSIN_SECONDARY2_BOUNCE_NAME";
@@ -481,10 +478,10 @@ namespace Assassin
 
                 if (component) effectTransform = component.FindChild("Root");
 
-                GameObject.Instantiate<GameObject>(EntityStates.HermitCrab.SpawnState.burrowPrefab, effectTransform.position, Quaternion.identity);
+                GameObject.Instantiate<GameObject>(EntityStates.RoboBallBoss.DeathState.deathEffect, effectTransform.position, Quaternion.identity);
 
 
-                PlayAnimation("Body", "Spawn", "Spawn.playbackRate", 3, animator);
+                PlayAnimation("Body", "BonusJump", "BonusJump.playbackRate", 3, animator);
 
                 yield break;
             }

@@ -1,295 +1,126 @@
 ﻿using System;
 using RoR2;
 using UnityEngine;
-using UnityEngine.Networking;
-using EntityStates.Merc;
+using EntityStates.NullifierMonster;
+using EntityStates.Commando.CommandoWeapon;
 
-namespace EntityStates.Assassin5
+namespace EntityStates.Assassin.Weapon6
 {
-	// Token: 0x02000992 RID: 2450
-	public class ComboAttack : BaseState
+	// Token: 0x02000AB9 RID: 2745
+	public class Sniper : BaseState
 	{
-		// Token: 0x060038D7 RID: 14551 RVA: 0x000E8014 File Offset: 0x000E6214
+		// Token: 0x06003E81 RID: 16001 RVA: 0x001053D8 File Offset: 0x001035D8
 		public override void OnEnter()
 		{
 			base.OnEnter();
-			this.stopwatch = 0f;
-			this.earlyExitDuration = GroundLight.baseEarlyExitDuration / this.attackSpeedStat;
-			this.animator = base.GetModelAnimator();
-			bool @bool = this.animator.GetBool("isMoving");
-			bool bool2 = this.animator.GetBool("isGrounded");
-			switch (this.comboState)
+			base.AddRecoil(-1f * FireShotgun.recoilAmplitude, -2f * FireShotgun.recoilAmplitude, -0.5f * FireShotgun.recoilAmplitude, 0.5f * FireShotgun.recoilAmplitude);
+			this.maxDuration = FireShotgun.baseMaxDuration / this.attackSpeedStat;
+			this.minDuration = FireShotgun.baseMinDuration / this.attackSpeedStat;
+			Ray aimRay = base.GetAimRay();
+			base.StartAimMode(aimRay, 2f, false);
+			Util.PlaySound(FirePistol2.firePistolSoundString, base.gameObject);
+			base.PlayAnimation("Gesture, Additive", "SlashP1", "SlashCombo.playbackRate", this.maxDuration * 0.8f);
+			base.PlayAnimation("Gesture, Override", "SlashP1", "SlashCombo.playbackRate", this.maxDuration * 0.8f);
+			string muzzleName = "DaggerLeft";
+			if (FirePistol2.hitEffectPrefab)
 			{
-				case GroundLight.ComboState.GroundLight1:
-					this.attackDuration = GroundLight.baseComboAttackDuration / this.attackSpeedStat;
-					this.overlapAttack = base.InitMeleeOverlap(GroundLight.comboDamageCoefficient, this.hitEffectPrefab, base.GetModelTransform(), "DaggerLeft");
-					if (@bool || !bool2)
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					else
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					this.slashChildName = "GroundLight1Slash";
-					this.swingEffectPrefab = GroundLight.comboSwingEffectPrefab;
-					this.hitEffectPrefab = GroundLight.comboHitEffectPrefab;
-					this.attackSoundString = GroundLight.comboAttackSoundString;
-					break;
-				case GroundLight.ComboState.GroundLight2:
-					this.attackDuration = GroundLight.baseComboAttackDuration / this.attackSpeedStat;
-					this.overlapAttack = base.InitMeleeOverlap(GroundLight.comboDamageCoefficient, this.hitEffectPrefab, base.GetModelTransform(), "DaggerLeft");
-					if (@bool || !bool2)
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					else
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP1", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					this.slashChildName = "GroundLight2Slash";
-					this.swingEffectPrefab = GroundLight.comboSwingEffectPrefab;
-					this.hitEffectPrefab = GroundLight.comboHitEffectPrefab;
-					this.attackSoundString = GroundLight.comboAttackSoundString;
-					break;
-				case GroundLight.ComboState.GroundLight3:
-					this.attackDuration = GroundLight.baseFinisherAttackDuration / this.attackSpeedStat;
-					this.overlapAttack = base.InitMeleeOverlap(GroundLight.finisherDamageCoefficient, this.hitEffectPrefab, base.GetModelTransform(), "DaggerLeft");
-					if (@bool || !bool2)
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP2", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP2", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					else
-					{
-						base.PlayAnimation("Gesture, Additive", "SlashP2", "SlashCombo.playbackRate", this.attackDuration);
-						base.PlayAnimation("Gesture, Override", "SlashP2", "SlashCombo.playbackRate", this.attackDuration);
-					}
-					this.slashChildName = "GroundLight3Slash";
-					this.swingEffectPrefab = GroundLight.finisherSwingEffectPrefab;
-					this.hitEffectPrefab = GroundLight.finisherHitEffectPrefab;
-					this.attackSoundString = GroundLight.finisherAttackSoundString;
-					break;
+				EffectManager.SimpleMuzzleFlash(FirePistol2.hitEffectPrefab, base.gameObject, muzzleName, false);
 			}
-			base.characterBody.SetAimTimer(this.attackDuration + 1f);
-			this.overlapAttack.hitEffectPrefab = this.hitEffectPrefab;
+			if (base.isAuthority)
+			{
+				new BulletAttack
+				{
+					owner = base.gameObject,
+					weapon = base.gameObject,
+					origin = aimRay.origin,
+					aimVector = aimRay.direction,
+					minSpread = 0f,
+					maxSpread = base.characterBody.spreadBloomAngle,
+					bulletCount = 1,
+					procCoefficient = 1f,
+					damage = 3f * this.damageStat,
+					force = 180f,
+					falloffModel = BulletAttack.FalloffModel.DefaultBullet,
+					tracerEffectPrefab = FireShotgun.tracerEffectPrefab,
+					muzzleName = muzzleName,
+					hitEffectPrefab = FireLightsOut.hitEffectPrefab,
+					isCrit = Util.CheckRoll(this.critStat, base.characterBody.master),
+					HitEffectNormal = false,
+					radius = 1f,
+					stopperMask = LayerIndex.world.collisionMask,
+				}.Fire();
+			}
+			base.characterBody.AddSpreadBloom(FireShotgun.spreadBloomValue);
 		}
 
-		// Token: 0x060038D8 RID: 14552 RVA: 0x00032FA7 File Offset: 0x000311A7
+		// Token: 0x06003E82 RID: 16002 RVA: 0x00032FA7 File Offset: 0x000311A7
 		public override void OnExit()
 		{
 			base.OnExit();
 		}
 
-		// Token: 0x060038D9 RID: 14553 RVA: 0x000E82F0 File Offset: 0x000E64F0
+		// Token: 0x06003E83 RID: 16003 RVA: 0x001055E0 File Offset: 0x001037E0
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-			this.hitPauseTimer -= Time.fixedDeltaTime;
-			if (base.isAuthority)
+			this.buttonReleased |= !base.inputBank.skill1.down;
+			if (base.fixedAge >= this.maxDuration && base.isAuthority)
 			{
-				bool flag = base.FireMeleeOverlap(this.overlapAttack, this.animator, "DaggerLeft", GroundLight.forceMagnitude, true);
-				this.hasHit = (this.hasHit || flag);
-				if (flag)
-				{
-					Util.PlaySound(GroundLight.hitSoundString, base.gameObject);
-					if (!this.isInHitPause)
-					{
-						this.hitStopCachedState = base.CreateHitStopCachedState(base.characterMotor, this.animator, "SlashCombo.playbackRate");
-						this.hitPauseTimer = GroundLight.hitPauseDuration / this.attackSpeedStat;
-						this.isInHitPause = true;
-					}
-				}
-				if (this.hitPauseTimer <= 0f && this.isInHitPause)
-				{
-					base.ConsumeHitStopCachedState(this.hitStopCachedState, base.characterMotor, this.animator);
-					this.isInHitPause = false;
-				}
-			}
-			if (this.animator.GetFloat("DaggerLeft") > 0f && !this.hasSwung)
-			{
-				Util.PlayScaledSound(this.attackSoundString, base.gameObject, GroundLight.slashPitch);
-				HealthComponent healthComponent = base.characterBody.healthComponent;
-				CharacterDirection component = base.characterBody.GetComponent<CharacterDirection>();
-				if (healthComponent)
-				{
-					healthComponent.TakeDamageForce(GroundLight.selfForceMagnitude * component.forward, true, false);
-				}
-				this.hasSwung = true;
-				EffectManager.SimpleMuzzleFlash(this.swingEffectPrefab, base.gameObject, this.slashChildName, false);
-			}
-			if (!this.isInHitPause)
-			{
-				this.stopwatch += Time.fixedDeltaTime;
-			}
-			else
-			{
-				base.characterMotor.velocity = Vector3.zero;
-				this.animator.SetFloat("SlashCombo.playbackRate", 0f);
-			}
-			if (base.isAuthority && this.stopwatch >= this.attackDuration - this.earlyExitDuration)
-			{
-				if (!this.hasSwung)
-				{
-					this.overlapAttack.Fire(null);
-				}
-				if (base.inputBank.skill1.down && this.comboState != GroundLight.ComboState.GroundLight3)
-				{
-					GroundLight groundLight = new GroundLight();
-					groundLight.comboState = this.comboState + 1;
-					this.outer.SetNextState(groundLight);
-					return;
-				}
-				if (this.stopwatch >= this.attackDuration)
-				{
-					this.outer.SetNextStateToMain();
-					return;
-				}
+				this.outer.SetNextStateToMain();
+				return;
 			}
 		}
 
-		// Token: 0x060038DA RID: 14554 RVA: 0x0000CFF7 File Offset: 0x0000B1F7
+		// Token: 0x06003E84 RID: 16004 RVA: 0x00105635 File Offset: 0x00103835
 		public override InterruptPriority GetMinimumInterruptPriority()
 		{
+			if (this.buttonReleased && base.fixedAge >= this.minDuration)
+			{
+				return InterruptPriority.Any;
+			}
 			return InterruptPriority.Skill;
 		}
 
-		// Token: 0x060038DB RID: 14555 RVA: 0x000E852B File Offset: 0x000E672B
-		public override void OnSerialize(NetworkWriter writer)
-		{
-			base.OnSerialize(writer);
-			writer.Write((byte)this.comboState);
-		}
+		// Token: 0x040039DC RID: 14812
+		public static GameObject effectPrefab;
 
-		// Token: 0x060038DC RID: 14556 RVA: 0x000E8541 File Offset: 0x000E6741
-		public override void OnDeserialize(NetworkReader reader)
-		{
-			base.OnDeserialize(reader);
-			this.comboState = (GroundLight.ComboState)reader.ReadByte();
-		}
+		// Token: 0x040039DD RID: 14813
+		public static GameObject hitEffectPrefab;
 
-		// Token: 0x04003179 RID: 12665
-		public static float baseComboAttackDuration;
+		// Token: 0x040039DE RID: 14814
+		public static GameObject tracerEffectPrefab;
 
-		// Token: 0x0400317A RID: 12666
-		public static float baseFinisherAttackDuration;
+		// Token: 0x040039DF RID: 14815
+		public static float damageCoefficient;
 
-		// Token: 0x0400317B RID: 12667
-		public static float baseEarlyExitDuration;
+		// Token: 0x040039E0 RID: 14816
+		public static float force;
 
-		// Token: 0x0400317C RID: 12668
-		public static string comboAttackSoundString;
+		// Token: 0x040039E1 RID: 14817
+		public static int bulletCount;
 
-		// Token: 0x0400317D RID: 12669
-		public static string finisherAttackSoundString;
+		// Token: 0x040039E2 RID: 14818
+		public static float baseMaxDuration = 2f;
 
-		// Token: 0x0400317E RID: 12670
-		public static float comboDamageCoefficient;
+		// Token: 0x040039E3 RID: 14819
+		public static float baseMinDuration = 0.5f;
 
-		// Token: 0x0400317F RID: 12671
-		public static float finisherDamageCoefficient;
+		// Token: 0x040039E4 RID: 14820
+		public static string attackSoundString;
 
-		// Token: 0x04003180 RID: 12672
-		public static float forceMagnitude;
+		// Token: 0x040039E5 RID: 14821
+		public static float recoilAmplitude;
 
-		// Token: 0x04003181 RID: 12673
-		public static GameObject comboHitEffectPrefab;
+		// Token: 0x040039E6 RID: 14822
+		public static float spreadBloomValue = 0.3f;
 
-		// Token: 0x04003182 RID: 12674
-		public static GameObject finisherHitEffectPrefab;
+		// Token: 0x040039E7 RID: 14823
+		private float maxDuration;
 
-		// Token: 0x04003183 RID: 12675
-		public static GameObject comboSwingEffectPrefab;
+		// Token: 0x040039E8 RID: 14824
+		private float minDuration;
 
-		// Token: 0x04003184 RID: 12676
-		public static GameObject finisherSwingEffectPrefab;
-
-		// Token: 0x04003185 RID: 12677
-		public static float hitPauseDuration;
-
-		// Token: 0x04003186 RID: 12678
-		public static float selfForceMagnitude;
-
-		// Token: 0x04003187 RID: 12679
-		public static string hitSoundString;
-
-		// Token: 0x04003188 RID: 12680
-		public static float slashPitch;
-
-		// Token: 0x04003189 RID: 12681
-		private float stopwatch;
-
-		// Token: 0x0400318A RID: 12682
-		private float attackDuration;
-
-		// Token: 0x0400318B RID: 12683
-		private float earlyExitDuration;
-
-		// Token: 0x0400318C RID: 12684
-		private Animator animator;
-
-		// Token: 0x0400318D RID: 12685
-		private OverlapAttack overlapAttack;
-
-		// Token: 0x0400318E RID: 12686
-		private float hitPauseTimer;
-
-		// Token: 0x0400318F RID: 12687
-		private bool isInHitPause;
-
-		// Token: 0x04003190 RID: 12688
-		private bool hasSwung;
-
-		// Token: 0x04003191 RID: 12689
-		private bool hasHit;
-
-		// Token: 0x04003192 RID: 12690
-		private GameObject swingEffectInstance;
-
-		// Token: 0x04003193 RID: 12691
-		public GroundLight.ComboState comboState;
-
-		// Token: 0x04003194 RID: 12692
-		private Vector3 characterForward;
-
-		// Token: 0x04003195 RID: 12693
-		private string slashChildName;
-
-		// Token: 0x04003196 RID: 12694
-		private BaseState.HitStopCachedState hitStopCachedState;
-
-		// Token: 0x04003197 RID: 12695
-		private GameObject swingEffectPrefab;
-
-		// Token: 0x04003198 RID: 12696
-		private GameObject hitEffectPrefab;
-
-		// Token: 0x04003199 RID: 12697
-		private string attackSoundString;
-
-		// Token: 0x02000993 RID: 2451
-		public enum ComboState
-		{
-			// Token: 0x0400319B RID: 12699
-			GroundLight1,
-			// Token: 0x0400319C RID: 12700
-			GroundLight2,
-			// Token: 0x0400319D RID: 12701
-			GroundLight3
-		}
-
-		// Token: 0x02000994 RID: 2452
-		private struct ComboStateInfo
-		{
-			// Token: 0x0400319E RID: 12702
-			private string mecanimStateName;
-
-			// Token: 0x0400319F RID: 12703
-			private string mecanimPlaybackRateName;
-		}
+		// Token: 0x040039E9 RID: 14825
+		private bool buttonReleased;
 	}
 }

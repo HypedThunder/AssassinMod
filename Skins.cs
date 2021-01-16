@@ -32,7 +32,7 @@ namespace RealAssassin
 
             skinDefInfo.GameObjectActivations = Array.Empty<SkinDef.GameObjectActivation>();
 
-            skinDefInfo.Icon = LoadoutAPI.CreateSkinIcon(new Color(0.4f, 0f, 0f), new Color(0.4f, 0f, 0f), new Color(0.4f, 0f, 0f), new Color(0.4f, 0f, 0f));
+            skinDefInfo.Icon = LoadoutAPI.CreateSkinIcon(new Color(0.4f, 0.4f, 0.4f), new Color(0.7f, 0f, 0f), new Color(1f, 1f, 1f), new Color(0.5f, 0.1f, 0.1f));
             skinDefInfo.MeshReplacements = new SkinDef.MeshReplacement[0];
             skinDefInfo.Name = "ASSASSIN_DEFAULT_SKIN_NAME";
             skinDefInfo.NameToken = "ASSASSIN_DEFAULT_SKIN_NAME";

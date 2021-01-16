@@ -2,7 +2,7 @@
 using RoR2;
 using RoR2.Projectile;
 using UnityEngine;
-using EntityStates.ClaymanMonster;
+using EntityStates.Assassin.Weapon;
 using EntityStates.ImpMonster;
 using EntityStates.ImpBossMonster;
 using EntityStates.LunarWisp;
@@ -39,7 +39,7 @@ namespace EntityStates.Assassin.Weapon2
 					origin = aimRay.origin,
 					aimVector = aimRay.direction,
 					minSpread = 2f,
-					maxSpread = 11f,
+					maxSpread = 12f,
 					bulletCount = (uint)KnifeBurst.bulletCount,
 					procCoefficient = 0.7f,
 					damage = KnifeBurst.damageCoefficient * this.damageStat,
@@ -48,7 +48,7 @@ namespace EntityStates.Assassin.Weapon2
 					falloffModel = BulletAttack.FalloffModel.DefaultBullet,
 					tracerEffectPrefab = FireLunarGuns.bulletTracerEffectPrefab,
 					muzzleName = muzzleName,
-					hitEffectPrefab = SwipeForward.hitEffectPrefab,
+					hitEffectPrefab = SlashCombo.hitEffectPrefab,
 					isCrit = Util.CheckRoll(this.critStat, base.characterBody.master),
 					HitEffectNormal = true,
 					radius = 0.8f
@@ -61,8 +61,6 @@ namespace EntityStates.Assassin.Weapon2
 		public override void OnExit()
 		{
 			base.OnExit();
-			base.PlayAnimation("Gesture, Override", "SlashP2");
-			base.PlayAnimation("Gesture, Additive", "SlashP2");
 		}
 
 		// Token: 0x06003E83 RID: 16003 RVA: 0x001055E0 File Offset: 0x001037E0

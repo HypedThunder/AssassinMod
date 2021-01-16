@@ -7,12 +7,14 @@ namespace AssassinAssets
     public static class Assets
     {
         public static AssetBundle AssassinAssetBundle = LoadAssetBundle(Assassin.Properties.Resources.assassinassets);
+        public static AssetBundle AssassinAssetBundle2 = LoadAssetBundle(Assassin.Properties.Resources.assassinassets21);
 
-        public static Texture charPortrait = AssassinAssetBundle.LoadAsset<Texture>("Icon");
+        public static Texture charPortrait = AssassinAssetBundle2.LoadAsset<Texture>("icon 1");
         public static Sprite iconP = AssassinAssetBundle.LoadAsset<Sprite>("iconP");
         public static Sprite icon1 = AssassinAssetBundle.LoadAsset<Sprite>("icon1");
-        public static Sprite icon2 = AssassinAssetBundle.LoadAsset<Sprite>("icon2");
-        public static Sprite icon3 = AssassinAssetBundle.LoadAsset<Sprite>("icon3");
+        public static Sprite icon2 = AssassinAssetBundle2.LoadAsset<Sprite>("icon9");
+        public static Sprite icon2b = AssassinAssetBundle2.LoadAsset<Sprite>("icon2b");
+        public static Sprite icon3 = AssassinAssetBundle2.LoadAsset<Sprite>("icon10");
         public static Sprite icon4 = AssassinAssetBundle.LoadAsset<Sprite>("icon4");
 
         static AssetBundle LoadAssetBundle(Byte[] resourceBytes)

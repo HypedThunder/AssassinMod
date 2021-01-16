@@ -2,6 +2,7 @@
 using RoR2;
 using UnityEngine;
 using EntityStates.Huntress;
+using EntityStates.Drone.DroneWeapon;
 
 namespace EntityStates.Assassin.Weapon3
 {
@@ -12,7 +13,7 @@ namespace EntityStates.Assassin.Weapon3
 		public override void OnEnter()
 		{
 			base.OnEnter();
-			Util.PlaySound(BackflipState.dodgeSoundString, base.gameObject);
+			Util.PlaySound(EntityStates.Engi.EngiBubbleShield.Deployed.destroySoundString, base.gameObject);
 			this.modelTransform = base.GetModelTransform();
 			bool flag = this.modelTransform;
 			if (flag)
@@ -42,7 +43,7 @@ namespace EntityStates.Assassin.Weapon3
 			bool flag5 = base.skillLocator.secondary.skillDef.skillNameToken == "ASSASSIN_SECONDARY2_BOUNCE_NAME";
 			if (flag5)
 			{
-				base.skillLocator.primary.RunRecharge(4f);
+				base.skillLocator.secondary.RunRecharge(4f);
 			}
 		}
 
@@ -58,7 +59,7 @@ namespace EntityStates.Assassin.Weapon3
 			EffectData effectData = new EffectData();
 			effectData.rotation = Util.QuaternionSafeLookRotation(this.blinkVector);
 			effectData.origin = origin;
-			EffectManager.SpawnEffect(GroundLight.comboHitEffectPrefab, effectData, false);
+			EffectManager.SpawnEffect(EntityStates.EngiTurret.EngiTurretWeapon.FireGauss.effectPrefab, effectData, false);
 		}
 
 		// Token: 0x0600004B RID: 75 RVA: 0x00005FD8 File Offset: 0x000041D8
@@ -85,7 +86,7 @@ namespace EntityStates.Assassin.Weapon3
 			bool flag = !this.outer.destroying;
 			if (flag)
 			{
-				Util.PlaySound(BackflipState.dodgeSoundString, base.gameObject);
+				Util.PlaySound(EntityStates.Engi.EngiBubbleShield.Deployed.destroySoundString, base.gameObject);
 				this.CreateBlinkEffect(Util.GetCorePosition(base.gameObject));
 				this.modelTransform = base.GetModelTransform();
 				bool flag2 = this.modelTransform;
@@ -137,9 +138,6 @@ namespace EntityStates.Assassin.Weapon3
 
 		// Token: 0x04000074 RID: 116
 		private Vector3 blinkVector = Vector3.zero;
-
-		// Token: 0x04000069 SEX: YA MOM
-		public static float projectileDamageCoefficient = 4f;
 
 		// Token: 0x04000075 RID: 117
 		[SerializeField]
